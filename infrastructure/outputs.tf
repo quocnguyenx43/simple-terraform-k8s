@@ -13,11 +13,3 @@ output "endpoint" {
 output "client_key" {
   value = kind_cluster.default.client_key
 }
-
-output "jenkins_url" {
-  value = "http://jenkins.localtest.me"
-}
-
-output "grafana_admin_password" {
-  value = "admin"
-}

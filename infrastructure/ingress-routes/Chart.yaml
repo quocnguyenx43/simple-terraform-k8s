@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ingress-gateway
+version: 0.1.0
+description: Central ingress routes for services

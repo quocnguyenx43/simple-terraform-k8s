@@ -1,0 +1,57 @@
+controller:
+  serviceType: ClusterIP
+  port: 8080
+
+  # Create default admin user
+  admin:
+    username: admin
+    password: admin
+
+  # Enable ingress for Jenkins
+  ingress:
+    enabled: false
+
+  # Persistent volume for Jenkins data
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    storageClass: standard
+
+  # Resource requests and limits (optional)
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+  # Java options
+  javaOpts: "-Xms512m -Xmx1024m"
+
+  # Enable agent listener (for Jenkins build agents)
+  agentListenerPort: 50000
+
+  # RBAC + ServiceAccount
+  rbac:
+    create: true
+  serviceAccount:
+    create: true
+    name: jenkins-sa
+
+agent:
+  enabled: true
+  # Keep the agent minimal (optional)
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+# Disable network policies for simplicity (Kind doesn’t need it)
+networkPolicy:
+  enabled: false

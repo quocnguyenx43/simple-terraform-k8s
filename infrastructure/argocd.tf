@@ -5,14 +5,5 @@ resource "helm_release" "argocd" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "6.8.0"
-
-  set {
-    name  = "server.service.type"
-    value = "ClusterIP"
-  }
-
-  set {
-    name  = "configs.params.server.insecure"
-    value = "true"
-  }
+  values     = [file("${path.module}/platforms/argocd-values.yaml")]
 }

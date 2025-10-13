@@ -1,6 +1,6 @@
 # Create a Kind cluster via Terraform
 resource "kind_cluster" "default" {
-  name           = "simple-cicd-pipelines"
+  name           = "simple-terraform-k8s"
   node_image     = "kindest/node:v1.30.2"
   wait_for_ready = true
 
@@ -11,13 +11,21 @@ resource "kind_cluster" "default" {
     node {
       role = "control-plane"
       extra_port_mappings {
-        container_port = 30080
         host_port      = 80
+        container_port = 31180
       }
       extra_port_mappings {
-        container_port = 30443
         host_port      = 443
+        container_port = 31443
       }
+    }
+
+    node {
+      role = "worker"
+    }
+
+    node {
+      role = "worker"
     }
   }
 }
