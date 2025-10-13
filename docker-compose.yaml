@@ -1,0 +1,61 @@
+networks:
+  simple-cicd-pipelines:
+    driver: bridge
+
+services:
+  # prediction-app-test:
+  #   build: .
+  #   container_name: prediction-app-test
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - PROMETHEUS_MULTIPROC_DIR=/tmp
+  #   networks:
+  #     - simple-cicd-pipelines
+
+  jenkins:
+    build: ./jenkins
+    container_name: jenkins
+    user: root
+    privileged: true
+    env_file:
+      - ./jenkins/.env
+    ports:
+      - "8080:8080"     # Web UI
+      - "50000:50000"   # Agent communication
+    volumes:
+      - ./jenkins/pipelines:/var/jenkins_home/pipelines   # Persist job definitions
+      - /var/run/docker.sock:/var/run/docker.sock         # Allow Jenkins to use Docker on host
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    networks:
+      - simple-cicd-pipelines
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - jenkins
+    networks:
+      - simple-cicd-pipelines
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - jenkins
+      - prometheus
+    networks:
+      - simple-cicd-pipelines

@@ -1,0 +1,32 @@
+# Python-specific files and directories
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Build artifacts and temporary files
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# IDE-specific files and directories (if applicable)
+.idea/
+.vscode/
+
+# Environment variables and sensitive data
+.env
+*.env
+secrets.yaml
+config.ini # Or any other file containing sensitive configurations
+
+# Logs and temporary data
+logs/
+tmp/
+*.log
+
+# Docker-related files that are not part of the build context
+Dockerfile
+docker-compose.yml
