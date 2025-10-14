@@ -26,11 +26,11 @@ configs:
 controller:
   resources:
     requests:
-      cpu: "200m"
-      memory: "256Mi"
+      cpu: "250m"
+      memory: "300Mi"
     limits:
-      cpu: "500m"
-      memory: "512Mi"
+      cpu: "600m"
+      memory: "600Mi"
 
 dex:
   enabled: false
