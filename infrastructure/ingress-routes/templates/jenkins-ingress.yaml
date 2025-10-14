@@ -2,11 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: jenkins-ingress
-  namespace: ingress-routes
+  namespace: jenkins
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
   - host: jenkins.{{ .Values.global.domain }}
     http:
@@ -18,7 +19,4 @@ spec:
             name: jenkins
             port:
               number: 8080
-  tls:
-  - hosts:
-      - jenkins.{{ .Values.global.domain }}
-    secretName: jenkins-tls
+  # No TLS secret; using HTTP

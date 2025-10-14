@@ -222,7 +222,7 @@ __marimo__/
 *.tfstate
 *.tfstate.*
 *.tfstate.backup*
-terraform/simple-cicd-pipelines-config
+infrastructure/simple-terraform-k8s-config
 
 # Crash log files
 crash.log
@@ -252,4 +252,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-infrastructure/simple-cicd-pipelines-config
+infrastructure/simple-terraform-k8s
