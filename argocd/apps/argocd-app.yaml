@@ -8,7 +8,14 @@ spec:
   source:
     repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
     targetRevision: master
-    path: helm/shared-values/argocd-values.yaml
+    path: helm/shared-values
+    helm:
+      valueFiles:
+        - argocd-values.yaml
+      parameters: []
+      chart: argo-cd
+      repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 6.8.0
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
