@@ -7,10 +7,6 @@ service:
 
 persistence:
   enabled: true
-  size: 3Gi
+  size: 2Gi
   accessModes:
     - ReadWriteOnce
-
-
-
-
