@@ -253,3 +253,6 @@ override.tf.json
 terraform.rc
 
 infrastructure/simple-terraform-k8s
+
+helm/rendered/*
+!helm/rendered/.gitkeep

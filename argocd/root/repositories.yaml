@@ -28,5 +28,5 @@ stringData:
   url: https://github.com/quocnguyenx43/simple-terraform-k8s
   type: git
   name: simple-terraform-k8s
-  username: <YOUR_USERNAME>
-  password: <YOUR_TOKEN>
+  username: <YOUR_GH_USERNAME>
+  password: <YOUR_GH_TOKEN>
