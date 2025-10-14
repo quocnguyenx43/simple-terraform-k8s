@@ -63,7 +63,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prometheus-kube-prometheus-prometheus
+                name: prometheus-prometheus-kube-prometheus-prometheus-0
                 port:
                   number: 9090
 ---
