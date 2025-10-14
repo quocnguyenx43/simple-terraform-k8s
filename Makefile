@@ -3,13 +3,13 @@ default: up
 up: infra boostrap
 
 infra:
-	cd terraform && \
+	cd infrastructure && \
 	terraform init && \
 	terraform apply -auto-approve && \
 	cd ..
 
 destroy:
-	cd terraform && \
+	cd infrastructure && \
 	terraform destroy -auto-approve && \
 	cd ..
 

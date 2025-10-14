@@ -1,0 +1,32 @@
+# AppProject ArgoCD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  namespace: argocd
+spec:
+  description: Simple Terraform K8s Project
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+---
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-simple-terraform-k8s
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://github.com/quocnguyenx43/simple-terraform-k8s
+  type: git
+  name: simple-terraform-k8s
+  username: <YOUR_USERNAME>
+  password: <YOUR_TOKEN>

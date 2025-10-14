@@ -1,0 +1,36 @@
+server:
+  ingress:
+    enabled: false
+  service:
+    type: ClusterIP
+    ports:
+      http: 80
+      https: 443
+  # allows HTTP access inside cluster (fine for kind)
+  extraArgs:
+    - --insecure
+  # allowed resources
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+configs:
+  params:
+    # allows ArgoCD UI via HTTP (no TLS proxy)
+    server.insecure: "true"
+
+controller:
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+dex:
+  enabled: false

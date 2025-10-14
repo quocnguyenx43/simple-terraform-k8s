@@ -5,5 +5,8 @@ resource "helm_release" "argocd" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "6.8.0"
-  values     = [file("${path.module}/platforms/argocd-values.yaml")]
+  create_namespace = false
+  values     = [file("${path.module}/../helm/shared-values/argocd-values.yaml")]
+
+  depends_on = [kind_cluster.default]
 }

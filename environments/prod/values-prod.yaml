@@ -1,1 +1,8 @@
+global:
+  domain: localtest.me
 
+python-app:
+  replicas: 1
+  image:
+    repository: your-user/myapp
+    tag: dev
