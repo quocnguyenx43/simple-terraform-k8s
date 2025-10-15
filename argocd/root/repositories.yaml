@@ -25,7 +25,7 @@ metadata:
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
-  url: https://github.com/quocnguyenx43/simple-terraform-k8s
+  url: https://github.com/quocnguyenx43/simple-terraform-k8s.git
   type: git
   name: simple-terraform-k8s
   username: <YOUR_GH_USERNAME>

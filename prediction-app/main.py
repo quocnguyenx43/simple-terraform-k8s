@@ -31,3 +31,18 @@ def predict(data: HouseInfo):
 
     # Return the result
     return HousePrediction(Price=price)
+
+# API versioning
+@app.get("/version")
+def get_version():
+    """
+    Return the API or model version information.
+    """
+    version_info = {
+        "api_version": "1.0.0",
+        "model_version": "2025-10-15",  # you can make this dynamic
+        "description": "House price prediction service",
+        "status": "ok"
+    }
+    logger.info("Version endpoint called.")
+    return version_info

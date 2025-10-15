@@ -1,11 +1,39 @@
-prometheus:
-  prometheusSpec:
-    retention: 7d
-    scrapeInterval: 30s
-    serviceMonitorSelectorNilUsesHelmValues: false
-    podMonitorSelectorNilUsesHelmValues: false
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: admin
+  service:
+    type: ClusterIP
 
 alertmanager:
   enabled: true
-  alertmanagerSpec:
-    replicas: 1
+
+prometheus:
+  service:
+    type: ClusterIP
+
+  prometheusSpec:
+    retention: 10d
+
+    # Discover itself (prometheus stack)
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+
+    # Custom scraping targets in the cluster
+    additionalScrapeConfigs:
+      - job_name: "prometheus"
+        static_configs:
+          - targets: ["localhost:9090"]
+            labels:
+              app: "prometheus"
+
+      - job_name: "jenkins"
+        metrics_path: /prometheus/
+        static_configs:
+          - targets: ["jenkins:8080"]
+
+      - job_name: "prediction-app"
+        static_configs:
+          - targets: ["prediction-app:8000"]

@@ -256,3 +256,7 @@ infrastructure/simple-terraform-k8s
 
 helm/rendered/*
 !helm/rendered/.gitkeep
+
+# macOS system files
+.DS_Store
+**/.DS_Store

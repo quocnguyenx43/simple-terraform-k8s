@@ -6,7 +6,7 @@ COPY ./requirements.txt ./
 
 RUN pip install -r ./requirements.txt --no-cache-dir
 
-COPY ./prediction-app .
+COPY . .
 
 EXPOSE 8000
 

@@ -15,13 +15,13 @@ spec:
       helm:
         valueFiles:
           - $values/helm/shared-values/jenkins-values.yaml
-    
-    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
+
+    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
       targetRevision: master
       ref: values
 
   source:
-    repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
+    repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
     targetRevision: master
     path: helm/shared-values/jenkins-values.yaml
 

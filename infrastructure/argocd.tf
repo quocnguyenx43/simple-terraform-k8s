@@ -6,7 +6,11 @@ resource "helm_release" "argocd" {
   chart      = "argo-cd"
   version    = "6.8.0"
   create_namespace = false
-  values     = [file("${path.module}/../helm/shared-values/argocd-values.yaml")]
+  values     = [file("${path.module}/platforms/argocd-values.yaml")]
+
+  # Give the chart extra time to complete admission jobs and webhooks
+  timeout = 1200
+  wait    = true
 
   depends_on = [kind_cluster.default]
 }

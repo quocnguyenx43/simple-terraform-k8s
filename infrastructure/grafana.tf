@@ -6,7 +6,11 @@ resource "helm_release" "grafana" {
   chart            = "grafana"
   version          = "8.6.0"
   create_namespace = false
-  values           = [file("${path.module}/../helm/shared-values/grafana-values.yaml")]
+  values           = [file("${path.module}/platforms/grafana-values.yaml")]
+
+  # Give the chart extra time to complete admission jobs and webhooks
+  timeout = 1200
+  wait    = true
 
   depends_on = [kind_cluster.default]
 }

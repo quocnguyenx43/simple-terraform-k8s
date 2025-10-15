@@ -6,7 +6,11 @@ resource "helm_release" "ingress_nginx" {
   chart            = "ingress-nginx"
   version          = "4.11.2"
   create_namespace = false
-  values           = [file("${path.module}/../helm/shared-values/ingress-nginx-values.yaml")]
+  values           = [file("${path.module}/platforms/ingress-nginx-values.yaml")]
+
+  # Give the chart extra time to complete admission jobs and webhooks
+  timeout = 1200
+  wait    = true
 
   depends_on = [kind_cluster.default]
 }

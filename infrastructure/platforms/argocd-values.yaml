@@ -18,26 +18,6 @@ server:
       cpu: "200m"
       memory: "512Mi"
 
-  # Enable metrics for Prometheus
-  metrics:
-    enabled: true
-
-# Enable metrics for Prometheus
-repoServer:
-  metrics:
-    enabled: true
-applicationSet:
-  metrics:
-    enabled: true
-controller:
-  metrics:
-    enabled: true
-
-metrics:
-  enabled: true
-  serviceMonitor:
-    enabled: true
-
 configs:
   params:
     # allows ArgoCD UI via HTTP (no TLS proxy)

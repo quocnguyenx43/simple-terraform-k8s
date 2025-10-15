@@ -6,7 +6,11 @@ resource "helm_release" "prometheus" {
   chart            = "kube-prometheus-stack"
   version          = "62.2.0"
   create_namespace = false
-  values           = [file("${path.module}/../helm/shared-values/prometheus-values.yaml")]
+  values           = [file("${path.module}/platforms/prometheus-values.yaml")]
+
+  # Give the chart extra time to complete admission jobs and webhooks
+  timeout = 1200
+  wait    = true
 
   depends_on = [kind_cluster.default]
 }

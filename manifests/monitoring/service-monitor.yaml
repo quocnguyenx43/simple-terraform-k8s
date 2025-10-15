@@ -1,0 +1,70 @@
+# Ingress NGINX
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+spec:
+  namespaceSelector:
+    matchNames: ["ingress-nginx"]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/component: controller
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+---
+# ArgoCD
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  namespaceSelector:
+    matchNames: ["argocd"]
+  selector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: ["argocd-metrics", "argocd-server-metrics"]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+---
+# Jenkins
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jenkins
+  namespace: jenkins
+spec:
+  namespaceSelector:
+    matchNames: ["jenkins"]
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: jenkins
+  endpoints:
+    - port: http
+      path: /prometheus
+      interval: 30s
+---
+# Python app
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prediction-app
+  namespace: apps
+spec:
+  namespaceSelector:
+    matchNames: ["apps"]
+  selector:
+    matchLabels:
+      app: prediction-app
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s

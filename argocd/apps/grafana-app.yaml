@@ -16,7 +16,7 @@ spec:
         valueFiles:
           - $values/helm/shared-values/grafana-values.yaml
     
-    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
+    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
       targetRevision: master
       ref: values
 

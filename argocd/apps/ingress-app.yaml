@@ -9,7 +9,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
+    repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
     targetRevision: master
     path: manifests/ingress-nginx
 

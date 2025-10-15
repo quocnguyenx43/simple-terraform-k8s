@@ -17,6 +17,14 @@ clean-creds:
 	rm -rf ./helm/rendered/jenkins-credentials.yaml
 	rm -rf ./helm/rendered/argocd-repo-secret.yaml
 
+argocd-secret-values:
+	@if [ ! -f .env ]; then echo "Missing .env. Add ARGOCD_REPO_*, GITHUB_* vars."; exit 1; fi
+	bash scripts/render-argocd-repo-secret.sh
+
+argocd-apply-secrets:
+	@if [ ! -f helm/rendered/argocd-repo-secret.yaml ]; then echo "Run 'make argocd-secret-values' first"; exit 1; fi
+	kubectl apply -f helm/rendered/argocd-repo-secret.yaml
+
 jenkins-creds-values:
 	@if [ ! -f .env ]; then echo "Missing .env. Add GITHUB_*, DOCKERHUB_* vars."; exit 1; fi
 	bash scripts/render-jenkins-credentials.sh
@@ -32,13 +40,5 @@ jenkins-apply-creds:
 		-f helm/shared-values/jenkins-values.yaml \
 		-f helm/rendered/jenkins-credentials.yaml \
 		-n jenkins
-
-argocd-secret-values:
-	@if [ ! -f .env ]; then echo "Missing .env. Add ARGOCD_REPO_*, GITHUB_* vars."; exit 1; fi
-	bash scripts/render-argocd-repo-secret.sh
-
-argocd-apply-secret:
-	@if [ ! -f helm/rendered/argocd-repo-secret.yaml ]; then echo "Run 'make argocd-secret-values' first"; exit 1; fi
-	kubectl apply -f helm/rendered/argocd-repo-secret.yaml
 
 .PHONY: infra boostrap

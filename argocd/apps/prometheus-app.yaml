@@ -15,10 +15,15 @@ spec:
       helm:
         valueFiles:
           - $values/helm/shared-values/prometheus-values.yaml
-    
-    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s
+
+    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
       targetRevision: master
       ref: values
+
+    - repoURL: https://github.com/quocnguyenx43/simple-terraform-k8s.git
+      targetRevision: master
+      path: manifests/monitoring
+      ref: manifests
 
   destination:
     server: https://kubernetes.default.svc

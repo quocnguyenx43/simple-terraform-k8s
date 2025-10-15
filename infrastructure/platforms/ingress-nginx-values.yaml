@@ -1,0 +1,6 @@
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 31180   # Host:80  => NodePort:31180
+      https: 31443  # Host:443 => NodePort:31443
