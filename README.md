@@ -59,15 +59,23 @@ terraform apply
 
 # Check
 docker ps -a
-kubectl get pods -o wide
+kubectl get pods -A -o wide
 
 # Access Argo
 kubectl port-forward svc/argocd-server -n argocd 8000:80
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 
-# Add Argo
+# Add Argo Repo & Root app
 kubectl apply -f argocd/root/repositories.yaml
+make argocd-secret-values
+make argocd-apply-secrets
 kubectl apply -f argocd/root/root-app.yaml
+
+# Add Jenkins credentials
+make jenkins-creds-values
+make jenkins-apply-creds
+
+waitl
 
 dont use Terraform with Helm to create and config services,
 just use for create cluster, namespaces, RBAC, storage,...

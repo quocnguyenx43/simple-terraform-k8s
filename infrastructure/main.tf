@@ -20,14 +20,32 @@ resource "kind_cluster" "default" {
         host_port      = 443
         container_port = 31443
       }
+
+      # Mount Docker socket for Jenkins Docker-in-Docker
+      extra_mounts {
+        host_path      = "/var/run/docker.sock"
+        container_path = "/var/run/docker.sock"
+      }
     }
 
     node {
       role = "worker"
+
+      # Mount Docker socket for Jenkins Docker-in-Docker
+      extra_mounts {
+        host_path      = "/var/run/docker.sock"
+        container_path = "/var/run/docker.sock"
+      }
     }
 
     node {
       role = "worker"
+
+      # Mount Docker socket for Jenkins Docker-in-Docker
+      extra_mounts {
+        host_path      = "/var/run/docker.sock"
+        container_path = "/var/run/docker.sock"
+      }
     }
   }
 }

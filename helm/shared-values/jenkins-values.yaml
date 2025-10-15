@@ -41,6 +41,82 @@ controller:
     create: true
     name: jenkins-sa
 
+  # Docker-in-Docker configuration for building Docker images
+  # Add Docker socket mount for Docker-in-Docker
+  containerEnv:
+    - name: DOCKER_HOST
+      value: "unix:///var/run/docker.sock"
+  
+  # Mount Docker socket and add Docker CLI
+  sidecars:
+    configAutoReload:
+      enabled: false
+    # Docker-in-Docker sidecar
+    dind:
+      enabled: true
+      image: docker:dind
+      imageTag: "24.0.7"
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "1000m"
+          memory: "1Gi"
+      # Enable privileged mode for DinD
+      privileged: true
+      # Mount Docker socket
+      hostNetwork: false
+      # Add environment variables
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+      # Volume mounts for Docker socket
+      volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+      # Security context
+      securityContext:
+        privileged: true
+        runAsUser: 0
+
+  # Additional volumes for Docker socket
+  volumes:
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
+
+  # Install Docker CLI in Jenkins controller
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - docker-workflow:latest
+    - docker-plugin:latest
+
+  # Custom init container to install Docker CLI
+  initContainerEnv:
+    - name: DOCKER_HOST
+      value: "unix:///var/run/docker.sock"
+
+  # Add Docker CLI installation script
+  customInitContainers:
+    - name: docker-cli-installer
+      image: alpine:3.18
+      command: ['sh', '-c']
+      args:
+        - |
+          apk add --no-cache docker-cli
+          cp /usr/bin/docker /usr/local/bin/
+          chmod +x /usr/local/bin/docker
+      volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+      securityContext:
+        runAsUser: 0
+
 agent:
   enabled: true
   # Keep the agent minimal (optional)
