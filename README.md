@@ -18,6 +18,8 @@ End-to-end DevOps lab that provisions Kubernetes infrastructure with Terraform, 
 - Optionally updates Helm `values.yaml` image tag (GitOps change) via PR.
 - ArgoCD detects Git changes and syncs to the cluster.
 
+![Architecture](assets/architecture.png)
+
 ## Repository Layout
 
 ```txt
