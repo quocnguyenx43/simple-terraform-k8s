@@ -12,6 +12,12 @@ End-to-end DevOps lab that provisions Kubernetes infrastructure with Terraform, 
 - **Prometheus + Grafana**: Monitoring stack.
 - **Prediction App**: Example Python service deployed with Helm.
 
+### CI/CD Flow (High-Level)
+- Developer pushes code to repo.
+- Jenkins pipeline builds Docker image and pushes to registry.
+- Optionally updates Helm `values.yaml` image tag (GitOps change) via PR.
+- ArgoCD detects Git changes and syncs to the cluster.
+
 ## Repository Layout
 
 ```txt
@@ -127,42 +133,6 @@ Verify:
 kubectl get pods -A -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STATUS:.status.phase'
 ```
 
-Expected outputs:
-
-```txt
-NAMESPACE            NAME                                                         STATUS
-argocd               argocd-application-controller-0                              Running
-argocd               argocd-applicationset-controller-5f46cd794f-4xvld            Running
-argocd               argocd-notifications-controller-775d994fdb-kv2jt             Running
-argocd               argocd-redis-64fbd87db4-gsqml                                Running
-argocd               argocd-repo-server-777d79b679-x26l8                          Running
-argocd               argocd-server-5549cdf7b9-c7rxc                               Running
-ingress-nginx        ingress-nginx-controller-55dd9c5f4-65s8v                     Running
-jenkins              jenkins-0                                                    Running
-kube-system          coredns-7db6d8ff4d-grg6p                                     Running
-kube-system          coredns-7db6d8ff4d-wzngl                                     Running
-kube-system          etcd-simple-terraform-k8s-control-plane                      Running
-kube-system          kindnet-tq227                                                Running
-kube-system          kindnet-v48rt                                                Running
-kube-system          kindnet-wbzcg                                                Running
-kube-system          kube-apiserver-simple-terraform-k8s-control-plane            Running
-kube-system          kube-controller-manager-simple-terraform-k8s-control-plane   Running
-kube-system          kube-proxy-br2wt                                             Running
-kube-system          kube-proxy-gnnpw                                             Running
-kube-system          kube-proxy-vlggv                                             Running
-kube-system          kube-scheduler-simple-terraform-k8s-control-plane            Running
-local-path-storage   local-path-provisioner-65749bdd48-pq8z6                      Running
-monitoring           alertmanager-prometheus-kube-prometheus-alertmanager-0       Running
-monitoring           grafana-74956bbf8c-hgmgn                                     Running
-monitoring           prometheus-grafana-c7ccc695d-64wp2                           Running
-monitoring           prometheus-kube-prometheus-operator-745b788f88-xwqs7         Running
-monitoring           prometheus-kube-state-metrics-688d66b5b8-r7msr               Running
-monitoring           prometheus-prometheus-kube-prometheus-prometheus-0           Running
-monitoring           prometheus-prometheus-node-exporter-5kf55                    Running
-monitoring           prometheus-prometheus-node-exporter-9cf4b                    Running
-monitoring           prometheus-prometheus-node-exporter-dhts8                    Running```
-```
-
 ### 2) Access ArgoCD UI (optional to see what happen)
 ```bash
 kubectl port-forward svc/argocd-server -n argocd 8000:80
@@ -206,16 +176,23 @@ ArgoCD will automatically sync all child applications, including:
 - The `prediction-app`
 
 ### 4) Configure Jenkins Credentials
-Render and apply Jenkins credentials (e.g., registry username/password, tokens) using values in .env:
+
+Before proceeding, ensure you have set the required credentials in your `.env` file (e.g., registry username/password, tokens).
+
+Render and apply Jenkins credentials using the values from your `.env` file:
+
 ```bash
 make jenkins-creds-values
 make jenkins-apply-creds
 ```
 
-Wait for Jenkins to restart with new credentials:
+Wait for Jenkins to restart with the new credentials:
+
 ```bash
 kubectl get pods -n jenkins
 ```
+
+Monitor the pod status until Jenkins is running and ready.
 
 ### 5) Add Jenkins Pipelines
 Place pipelines under `jenkins/pipelines/`, e.g.:
@@ -229,32 +206,14 @@ Trigger a pipeline run from Jenkins UI.
 - Environment overrides live under `environments/dev/values-dev.yaml` and `environments/prod/values-prod.yaml`.
 - ArgoCD Applications reference these values to deploy per environment.
 
-## Make Targets (common)
-```bash
-make argocd-secret-values      # Render ArgoCD repo access Secret values file
-make argocd-apply-secrets      # Apply ArgoCD repo Secret to cluster
-make jenkins-creds-values      # Render Jenkins credentials Secret values file
-make jenkins-apply-creds       # Apply Jenkins credentials to cluster
-```
-
 ## Local Development (prediction-app)
 ```bash
 cd prediction-app
 docker compose up --build -d
 ```
 
-## CI/CD Flow (High-Level)
-- Developer pushes code to repo.
-- Jenkins pipeline builds Docker image and pushes to registry.
-- Optionally updates Helm `values.yaml` image tag (GitOps change) via PR.
-- ArgoCD detects Git changes and syncs to the cluster.
-
-## Troubleshooting
-- Argo sync issues: `kubectl -n argocd logs deploy/argocd-repo-server` and `argocd app diff`.
-- Jenkins credentials: ensure Secrets exist in the correct namespace and match Jenkins configuration.
-- Ingress: confirm DNS/hosts and `ingress-nginx` controller are healthy.
-
-## Notes
-- Images/diagrams to be added later.
-- Reference structure: [simple-cicd-pipelines README](https://github.com/quocnguyenx43/simple-cicd-pipelines/blob/master/README.md)
-
+### Author
+__Maintained by Quoc Nguyen__
+- GitHub: [@quocnguyenx43](https://github.com/quocnguyenx43/)
+- LinkedIn: [@quocnguyenx43](https://www.linkedin.com/in/quocnguyenx43/)
+- Email: [quocnguyenx43@gmail.com](mailto:{quocnguyenx43@gmail.com})

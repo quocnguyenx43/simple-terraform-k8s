@@ -57,7 +57,7 @@ pipeline {
       description: 'Git branch to build'
     )
     booleanParam(name: 'GIT_INSECURE',
-      defaultValue: true,
+      defaultValue: false,
       description: 'Disable SSL verification for Git (insecure clone)'
     )
     string(name: 'DOCKERHUB_USERNAME',
@@ -104,7 +104,6 @@ pipeline {
                 }
               }
             }
-
             echo "Repository cloned successfully."
           }
         }
@@ -224,13 +223,19 @@ pipeline {
       }
       steps {
         container('docker') {
-          sh '''
-            set -euxo pipefail
-            echo "Logging into Docker Hub as ${DOCKERHUB_USERNAME}..."
-            echo "$DOCKERHUB_CREDS_PSW" | docker login -u "$DOCKERHUB_CREDS_USR" --password-stdin
-            docker push "${IMAGE_REPO}:latest"
-            echo "Successfully pushed ${IMAGE_REPO}:latest"
-          '''
+          script {
+            env.IMAGE_TAG = sh(script: "date +%Y%m%d-%H%M%S", returnStdout: true).trim()
+            sh '''
+              set -euxo pipefail
+              echo "Computed IMAGE_TAG: ${IMAGE_TAG}"
+              echo "Logging into Docker Hub as ${DOCKERHUB_USERNAME}..."
+              echo "$DOCKERHUB_CREDS_PSW" | docker login -u "$DOCKERHUB_CREDS_USR" --password-stdin
+              docker push "${IMAGE_REPO}:latest"
+              docker tag "${IMAGE_REPO}:latest" "${IMAGE_REPO}:${IMAGE_TAG}"
+              docker push "${IMAGE_REPO}:${IMAGE_TAG}"
+              echo "Successfully pushed ${IMAGE_REPO}:latest and :${IMAGE_TAG}"
+            '''
+          }
         }
       }
     }
@@ -242,20 +247,11 @@ pipeline {
           script {
             echo "Updating Helm image tag in Git repo..."
 
-            // Compute short commit hash or timestamp for tagging
-            def IMAGE_TAG = sh(script: "date +%Y%m%d-%H%M%S", returnStdout: true).trim()
-
-            // Push image with version tag
-            sh """
-              set -euxo pipefail
-              docker tag "${IMAGE_REPO}:latest" "${IMAGE_REPO}:${IMAGE_TAG}"
-              docker push "${IMAGE_REPO}:${IMAGE_TAG}"
-            """
-
             // Commit Helm chart update
             withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_TOKEN')]) {
               if (params.GIT_INSECURE) {
                 sh """
+                  echo "Insecure Mode"
                   cd repo
                   git config user.name "jenkins-bot"
                   git config user.email "jenkins@local"
@@ -271,7 +267,13 @@ pipeline {
               }
               else {
                 sh """
+                  set -euxo pipefail
+                  echo "Secure Mode"
+
+                  rm -rf repo
+                  git clone -b ${BRANCH} https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/quocnguyenx43/simple-terraform-k8s.git repo
                   cd repo
+
                   git config user.name "jenkins-bot"
                   git config user.email "jenkins@local"
 
